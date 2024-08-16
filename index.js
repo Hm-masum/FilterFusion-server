@@ -30,12 +30,24 @@ async function run() {
 
     app.get('/all-products',async (req,res)=>{
       const search=req.query.search;
-      let query={
-        name:{$regex:search,$options:'i'}
+      const brand = req.query.brand;
+
+      let query={}
+
+      if(search){
+        query.name ={$regex:search,$options:'i'}
       }
+
+      if(brand !== "all"){
+        query.brand = brand
+      }
+
+
       const result= await productsCollection.find({...query}).toArray()
       res.send(result)
     })
+
+    
 
     app.post('/products',async(req,res)=>{
       const productsData = req.body;
