@@ -31,6 +31,7 @@ async function run() {
     app.get('/all-products',async (req,res)=>{
       const search=req.query.search;
       const brand = req.query.brand;
+      const category = req.query.category
 
       let query={}
 
@@ -39,7 +40,11 @@ async function run() {
       }
 
       if(brand !== "all"){
-        query.brand = brand
+        query.brand = {$regex:brand,$options:'i'};
+      }
+
+      if(category !== 'all'){
+        query.category = {$regex:category,$options:'i'};
       }
 
 
