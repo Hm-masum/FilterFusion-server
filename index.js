@@ -28,6 +28,15 @@ async function run() {
     
     const productsCollection = client.db("FilterFusion").collection("products");
 
+    app.get('/all-products',async (req,res)=>{
+      const search=req.query.search;
+      let query={
+        name:{$regex:search,$options:'i'}
+      }
+      const result= await productsCollection.find({...query}).toArray()
+      res.send(result)
+    })
+
     app.post('/products',async(req,res)=>{
       const productsData = req.body;
       const result = await productsCollection.insertOne(productsData)
