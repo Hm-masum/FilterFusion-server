@@ -1,10 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const jwt=require('jsonwebtoken')
 const app = express()
-const port = process.env.PORT || 9000;
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const port = process.env.PORT || 5000;
+const { MongoClient, ServerApiVersion} = require('mongodb');
 
 const corsOptions={
     origin:['http://localhost:5173'],
@@ -27,7 +26,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     
-    
+    const productsCollection = client.db("FilterFusion").collection("products");
+
+    app.post('/products',async(req,res)=>{
+      const productsData = req.body;
+      const result = await productsCollection.insertOne(productsData)
+      res.send(result)
+    })
 
     
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
