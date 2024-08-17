@@ -31,7 +31,9 @@ async function run() {
     app.get('/all-products',async (req,res)=>{
       const search=req.query.search;
       const brand = req.query.brand;
-      const category = req.query.category
+      const category = req.query.category;
+      const price = req.query.price;
+
 
       let query={}
 
@@ -39,16 +41,26 @@ async function run() {
         query.name ={$regex:search,$options:'i'}
       }
 
-      if(brand !== "all"){
+      if(brand && brand !== "all"){
         query.brand = {$regex:brand,$options:'i'};
       }
 
-      if(category !== 'all'){
+      if(category && category !== 'all'){
         query.category = {$regex:category,$options:'i'};
       }
 
+      if (price && price !== "all") {
+        if (price === "low") {
+          query.price = { $lte: 500 };
+        } else if (price === "mid") {
+          query.price = { $gt: 500, $lte: 1000 };
+        } else if (price === "high") {
+          query.price = { $gt: 1000 };
+        }
+      }
 
-      const result= await productsCollection.find({...query}).toArray()
+
+      const result= await productsCollection.find(query).toArray()
       res.send(result)
     })
 
