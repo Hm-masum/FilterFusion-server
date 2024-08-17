@@ -33,9 +33,11 @@ async function run() {
       const brand = req.query.brand;
       const category = req.query.category;
       const price = req.query.price;
+      const sort = req.query.sort;
 
 
       let query={}
+      let sortItem={}
 
       if(search){
         query.name ={$regex:search,$options:'i'}
@@ -59,8 +61,24 @@ async function run() {
         }
       }
 
+      if(sort && sort !== 'all'){
+        if(sort === 'lowToHigh'){
+          sortItem.price = 1;
+        }
+        else if(sort === 'highToLow'){
+          sortItem.price = -1;
+        }
+        else if(sort === 'newestDate'){
+          sortItem.created_date = -1;
+        }
+        else if(sort === 'lowestDate'){
+          sortItem.created_date = 1;
+        }
+      }
+      
 
-      const result= await productsCollection.find(query).toArray()
+
+      const result= await productsCollection.find(query).sort(sortItem).toArray()
       res.send(result)
     })
 
