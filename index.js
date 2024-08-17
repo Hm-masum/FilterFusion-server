@@ -34,6 +34,9 @@ async function run() {
       const category = req.query.category;
       const price = req.query.price;
       const sort = req.query.sort;
+      let page = req.query.page;
+      page=parseInt(page);
+      const size = 5;
 
 
       let query={}
@@ -76,10 +79,16 @@ async function run() {
         }
       }
       
+      const count = await productsCollection.countDocuments(query);
 
+      const result= await productsCollection
+        .find(query)
+        .sort(sortItem)
+        .skip(page * size)
+        .limit(size)
+        .toArray()
 
-      const result= await productsCollection.find(query).sort(sortItem).toArray()
-      res.send(result)
+      res.send({result,count})
     })
 
     
