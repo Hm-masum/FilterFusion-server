@@ -28,6 +28,12 @@ async function run() {
     
     const productsCollection = client.db("FilterFusion").collection("products");
 
+    app.post('/products',async(req,res)=>{
+      const productsData = req.body;
+      const result = await productsCollection.insertOne(productsData)
+      res.send(result)
+    })
+
     app.get('/all-products',async (req,res)=>{
       const search=req.query.search;
       const brand = req.query.brand;
@@ -37,7 +43,6 @@ async function run() {
       let page = req.query.page;
       page=parseInt(page);
       const size = 5;
-
 
       let query={}
       let sortItem={}
@@ -86,17 +91,9 @@ async function run() {
         .sort(sortItem)
         .skip(page * size)
         .limit(size)
-        .toArray()
+        .toArray();
 
       res.send({result,count})
-    })
-
-    
-
-    app.post('/products',async(req,res)=>{
-      const productsData = req.body;
-      const result = await productsCollection.insertOne(productsData)
-      res.send(result)
     })
 
     
