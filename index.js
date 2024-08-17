@@ -3,10 +3,10 @@ const cors = require('cors');
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion} = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
 
 const corsOptions={
-    origin:['http://localhost:5173'],
+    origin:['http://localhost:5173','https://filterfusion-8c8a9.web.app','https://filterfusion-8c8a9.firebaseapp.com'],
     credentials:true,
     optionSuccessStatus:200,
 }
@@ -42,7 +42,7 @@ async function run() {
       const sort = req.query.sort;
       let page = req.query.page;
       page=parseInt(page);
-      const size = 5;
+      const size = 6;
 
       let query={}
       let sortItem={}
@@ -94,6 +94,13 @@ async function run() {
         .toArray();
 
       res.send({result,count})
+    })
+
+    app.get("/product/:id",async(req,res)=>{
+      const id=req.params.id
+      const query = {_id: new ObjectId(id)} 
+      const result= await productsCollection.findOne(query)
+      res.send(result)
     })
 
     
